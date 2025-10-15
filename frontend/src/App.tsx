@@ -12,11 +12,8 @@ import {
   CssBaseline,
   ThemeProvider,
   createTheme,
-  Switch,
-  FormControlLabel,
 } from "@mui/material";
-import { ImageUpload } from "./components/ImageUpload";
-import { AdvancedUpload } from "./components/AdvancedUpload";
+import { ImageUploadNew } from "./components/ImageUploadNew";
 import { SearchResults } from "./components/SearchResults";
 import { StatsPanel } from "./components/StatsPanel";
 import type { UploadResponse } from "./types";
@@ -37,7 +34,6 @@ function App() {
   const [searchResults, setSearchResults] = useState<UploadResponse | null>(
     null
   );
-  const [advancedMode, setAdvancedMode] = useState(true);
 
   const handleUploadSuccess = (response: UploadResponse) => {
     setSearchResults(response);
@@ -54,19 +50,8 @@ function App() {
               component="div"
               sx={{ flexGrow: 1, fontWeight: "bold" }}
             >
-              ⚛️ Quantum Image Retrieval
+              Quantum Image Retrieval
             </Typography>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={advancedMode}
-                  onChange={(e) => setAdvancedMode(e.target.checked)}
-                  color="secondary"
-                />
-              }
-              label="Advanced Mode"
-              sx={{ mr: 2 }}
-            />
             <Typography variant="body2" color="text.secondary">
               Powered by AE-QIP Algorithm & Appwrite
             </Typography>
@@ -79,17 +64,13 @@ function App() {
               Quantum-Enhanced Image Search
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Upload an image to find similar images using quantum computing
+              Upload images to find similar ones using quantum computing
             </Typography>
           </Box>
 
           <StatsPanel />
 
-          {advancedMode ? (
-            <AdvancedUpload onUploadSuccess={handleUploadSuccess} />
-          ) : (
-            <ImageUpload onUploadSuccess={handleUploadSuccess} />
-          )}
+          <ImageUploadNew onUploadSuccess={handleUploadSuccess} />
 
           <SearchResults results={searchResults} />
         </Container>
