@@ -29,7 +29,6 @@ import {
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
-import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import { uploadImage, uploadAndStore } from "../services/api";
 import type { UploadResponse } from "../types";
 
@@ -236,16 +235,11 @@ export const ImageUploadNew: React.FC<ImageUploadNewProps> = ({
               : "Drag & drop images here"}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            or
+            or click below to select
           </Typography>
-          <Stack direction="row" spacing={2} justifyContent="center">
-            <Button variant="outlined" onClick={open}>
-              Select Files
-            </Button>
-            <Button variant="outlined" startIcon={<FolderOpenIcon />} onClick={open}>
-              Select Folder
-            </Button>
-          </Stack>
+          <Button variant="outlined" onClick={open}>
+            Select Multiple Files
+          </Button>
           <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: "block" }}>
             Supports: PNG, JPG, JPEG, GIF, WebP (Multiple files allowed)
           </Typography>

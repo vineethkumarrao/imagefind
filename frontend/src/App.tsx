@@ -74,22 +74,6 @@ function App() {
 
           <SearchResults results={searchResults} />
         </Container>
-
-        <Box
-          component="footer"
-          sx={{
-            py: 3,
-            px: 2,
-            mt: "auto",
-            textAlign: "center",
-            borderTop: "1px solid",
-            borderColor: "divider",
-          }}
-        >
-          <Typography variant="body2" color="text.secondary">
-            Quantum Image Retrieval System © 2025 | ResNet-50 + AE-QIP Algorithm
-          </Typography>
-        </Box>
       </Box>
     </ThemeProvider>
   );
