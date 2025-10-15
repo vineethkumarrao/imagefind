@@ -40,21 +40,21 @@ def upload_healthcare_images(image_dir: str = "data/professional_images/healthca
             model_path=config.MODEL_WEIGHTS_PATH,
             feature_dim=config.FEATURE_DIMENSION
         )
-        logger.info("✅ Feature extractor initialized")
+        logger.info("Feature extractor initialized")
         
         retrieval_system = AppwriteQuantumRetrieval()
-        logger.info("✅ Appwrite system initialized")
+        logger.info("Appwrite system initialized")
         
         # Get image files
         image_path = Path(image_dir)
         if not image_path.exists():
-            logger.error(f"❌ Directory not found: {image_dir}")
+            logger.error(f"Directory not found: {image_dir}")
             return
         
         image_files = list(image_path.glob("*.jpg")) + list(image_path.glob("*.png")) + list(image_path.glob("*.jpeg"))
         
         if not image_files:
-            logger.warning(f"⚠️  No images found in {image_dir}")
+            logger.warning(f"No images found in {image_dir}")
             return
         
         logger.info(f"📁 Found {len(image_files)} healthcare images")
@@ -88,25 +88,25 @@ def upload_healthcare_images(image_dir: str = "data/professional_images/healthca
                     features=features_list
                 )
                 
-                logger.info(f"✅ Upload successful: {result['image_id']}")
+                logger.info(f"Upload successful: {result['image_id']}")
                 success_count += 1
                 
             except Exception as e:
-                logger.error(f"❌ Error processing {image_file.name}: {e}")
+                logger.error(f"Error processing {image_file.name}: {e}")
                 error_count += 1
                 continue
         
         # Summary
         logger.info(f"\n{'='*60}")
-        logger.info(f"📊 Upload Summary")
+        logger.info(f"Upload Summary")
         logger.info(f"{'='*60}")
-        logger.info(f"✅ Successful: {success_count}")
-        logger.info(f"❌ Errors: {error_count}")
+        logger.info(f"Successful: {success_count}")
+        logger.info(f"Errors: {error_count}")
         logger.info(f"📁 Total: {len(image_files)}")
         logger.info(f"{'='*60}\n")
         
     except Exception as e:
-        logger.error(f"❌ Upload process failed: {e}")
+        logger.error(f"Upload process failed: {e}")
         import traceback
         traceback.print_exc()
 
@@ -124,5 +124,5 @@ if __name__ == '__main__':
         upload_healthcare_images(image_dir)
         
     except ValueError as e:
-        logger.error(f"❌ Configuration error: {e}")
+        logger.error(f"Configuration error: {e}")
         sys.exit(1)

@@ -22,7 +22,7 @@ try:
     QUANTUM_AVAILABLE = True
 except ImportError:
     QUANTUM_AVAILABLE = False
-    logging.warning("⚠️  Quantum algorithm not available")
+    logging.warning("Quantum algorithm not available")
 
 logger = logging.getLogger(__name__)
 
@@ -46,12 +46,12 @@ class AppwriteQuantumRetrieval:
         # Initialize quantum algorithm if available
         if QUANTUM_AVAILABLE:
             self.quantum_algo = AEQIPAlgorithm()
-            logger.info("✅ Quantum algorithm initialized")
+            logger.info("Quantum algorithm initialized")
         else:
             self.quantum_algo = None
-            logger.warning("⚠️  Running without quantum enhancement")
+            logger.warning("Running without quantum enhancement")
         
-        logger.info("✅ Appwrite services initialized")
+        logger.info("Appwrite services initialized")
     
     def upload_image(
         self,
@@ -111,7 +111,7 @@ class AppwriteQuantumRetrieval:
                 ]
             )
             
-            logger.info(f"✅ Upload successful: {file_id}")
+            logger.info(f"Upload successful: {file_id}")
             
             return {
                 'success': True,
@@ -123,7 +123,7 @@ class AppwriteQuantumRetrieval:
             }
             
         except Exception as e:
-            logger.error(f"❌ Upload failed: {e}")
+            logger.error(f"Upload failed: {e}")
             raise
     
     def search_similar_images(
@@ -146,7 +146,7 @@ class AppwriteQuantumRetrieval:
             List of similar images with similarity scores
         """
         try:
-            logger.info(f"🔍 Searching for similar images (top_k={top_k})...")
+            logger.info(f"Searching for similar images (top_k={top_k})...")
             
             # Build query with high limit to fetch all documents
             queries = [Query.limit(5000)]  # Fetch up to 5000 documents
@@ -161,8 +161,8 @@ class AppwriteQuantumRetrieval:
             )
             
             documents = result['documents']
-            logger.info(f"📊 Processing {len(documents)} documents...")
-            logger.info(f"🎯 Confidence threshold: {confidence_threshold:.4f}")
+            logger.info(f"Processing {len(documents)} documents...")
+            logger.info(f"Confidence threshold: {confidence_threshold:.4f}")
             
             # Calculate similarities
             similarities = []
@@ -204,12 +204,12 @@ class AppwriteQuantumRetrieval:
                         })
                         
                 except Exception as e:
-                    logger.warning(f"⚠️  Error processing document {doc['$id']}: {e}")
+                    logger.warning(f"Error processing document {doc['$id']}: {e}")
                     continue
             
             # Log all similarities for debugging (top 10)
             all_similarities.sort(key=lambda x: x['similarity'], reverse=True)
-            logger.info(f"📊 Top 10 ALL similarities (before threshold filter):")
+            logger.info(f"Top 10 ALL similarities (before threshold filter):")
             for i, sim in enumerate(all_similarities[:10]):
                 logger.info(f"   {i+1}. {sim['filename']}: {sim['similarity']:.6f}")
             
@@ -218,20 +218,20 @@ class AppwriteQuantumRetrieval:
             
             # Log top similarities for debugging
             if similarities:
-                logger.info(f"📊 Top 5 similarities (after threshold {confidence_threshold:.4f}):")
+                logger.info(f"Top 5 similarities (after threshold {confidence_threshold:.4f}):")
                 for i, sim in enumerate(similarities[:5]):
                     logger.info(f"   {i+1}. {sim['filename']}: {sim['similarity']:.4f}")
             else:
-                logger.warning(f"⚠️  No images met threshold {confidence_threshold:.4f}")
+                logger.warning(f"No images met threshold {confidence_threshold:.4f}")
             
             # Return top K
             results = similarities[:top_k]
-            logger.info(f"✅ Found {len(results)} similar images")
+            logger.info(f"Found {len(results)} similar images")
             
             return results
             
         except Exception as e:
-            logger.error(f"❌ Search failed: {e}")
+            logger.error(f"Search failed: {e}")
             raise
     
     def get_image(self, image_id: str) -> Optional[bytes]:
@@ -256,7 +256,7 @@ class AppwriteQuantumRetrieval:
             )
             
             if not result['documents']:
-                logger.warning(f"⚠️  Image not found: {image_id}")
+                logger.warning(f"Image not found: {image_id}")
                 return None
             
             doc = result['documents'][0]
@@ -272,7 +272,7 @@ class AppwriteQuantumRetrieval:
             return file_data
             
         except Exception as e:
-            logger.error(f"❌ Image retrieval failed: {e}")
+            logger.error(f"Image retrieval failed: {e}")
             return None
     
     def get_statistics(self) -> Dict[str, Any]:
@@ -315,7 +315,7 @@ class AppwriteQuantumRetrieval:
             return stats
             
         except Exception as e:
-            logger.error(f"❌ Statistics retrieval failed: {e}")
+            logger.error(f"Statistics retrieval failed: {e}")
             return {
                 'error': str(e),
                 'total_images': 0,

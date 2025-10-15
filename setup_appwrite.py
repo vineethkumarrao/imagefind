@@ -38,12 +38,12 @@ def setup_appwrite():
                 database_id=config.APPWRITE_DATABASE_ID,
                 name='Quantum Images Database'
             )
-            print(f"✅ Database created: {database['$id']}")
+            print(f"Database created: {database['$id']}")
         except Exception as e:
             if 'already exists' in str(e).lower() or 'document already exists' in str(e).lower():
                 print(f"ℹ️  Database already exists: {config.APPWRITE_DATABASE_ID}")
             else:
-                print(f"⚠️  Database creation error: {e}")
+                print(f"Database creation error: {e}")
         
         # Step 2: Create Collection
         print("\n📋 Creating collection...")
@@ -59,7 +59,7 @@ def setup_appwrite():
                     Permission.delete(Role.any())
                 ]
             )
-            print(f"✅ Collection created: {collection['$id']}")
+            print(f"Collection created: {collection['$id']}")
             
             # Step 3: Create Attributes
             print("\n🏗️  Creating collection attributes...")
@@ -73,7 +73,7 @@ def setup_appwrite():
                     size=255,
                     required=True
                 )
-                print("✅ Created attribute: image_id")
+                print("Created attribute: image_id")
             except Exception as e:
                 print(f"ℹ️  image_id: {e}")
             
@@ -86,7 +86,7 @@ def setup_appwrite():
                     size=50,
                     required=True
                 )
-                print("✅ Created attribute: category")
+                print("Created attribute: category")
             except Exception as e:
                 print(f"ℹ️  category: {e}")
             
@@ -99,7 +99,7 @@ def setup_appwrite():
                     size=10000,
                     required=True
                 )
-                print("✅ Created attribute: features")
+                print("Created attribute: features")
             except Exception as e:
                 print(f"ℹ️  features: {e}")
             
@@ -112,7 +112,7 @@ def setup_appwrite():
                     size=255,
                     required=True
                 )
-                print("✅ Created attribute: filename")
+                print("Created attribute: filename")
             except Exception as e:
                 print(f"ℹ️  filename: {e}")
             
@@ -125,7 +125,7 @@ def setup_appwrite():
                     size=500,
                     required=True
                 )
-                print("✅ Created attribute: storage_path")
+                print("Created attribute: storage_path")
             except Exception as e:
                 print(f"ℹ️  storage_path: {e}")
             
@@ -138,12 +138,12 @@ def setup_appwrite():
                     size=100,
                     required=True
                 )
-                print("✅ Created attribute: bucket_id")
+                print("Created attribute: bucket_id")
             except Exception as e:
                 print(f"ℹ️  bucket_id: {e}")
             
             # Create indexes
-            print("\n🔍 Creating indexes...")
+            print("\nCreating indexes...")
             try:
                 databases.create_index(
                     database_id=config.APPWRITE_DATABASE_ID,
@@ -152,7 +152,7 @@ def setup_appwrite():
                     type='key',
                     attributes=['category']
                 )
-                print("✅ Created index: category_index")
+                print("Created index: category_index")
             except Exception as e:
                 print(f"ℹ️  category_index: {e}")
             
@@ -164,7 +164,7 @@ def setup_appwrite():
                     type='unique',
                     attributes=['image_id']
                 )
-                print("✅ Created index: image_id_index")
+                print("Created index: image_id_index")
             except Exception as e:
                 print(f"ℹ️  image_id_index: {e}")
             
@@ -172,10 +172,10 @@ def setup_appwrite():
             if 'already exists' in str(e).lower() or 'document already exists' in str(e).lower():
                 print(f"ℹ️  Collection already exists: {config.APPWRITE_COLLECTION_ID}")
             else:
-                print(f"⚠️  Collection creation error: {e}")
+                print(f"Collection creation error: {e}")
         
         # Step 4: Create Storage Buckets
-        print("\n📦 Creating storage buckets...")
+        print("\nCreating storage buckets...")
         
         buckets = [
             (config.APPWRITE_BUCKET_HEALTHCARE, 'Healthcare Images'),
@@ -202,15 +202,15 @@ def setup_appwrite():
                     encryption=True,
                     antivirus=True
                 )
-                print(f"✅ Created bucket: {bucket_name} ({bucket_id})")
+                print(f"Created bucket: {bucket_name} ({bucket_id})")
             except Exception as e:
                 if 'already exists' in str(e).lower() or 'document already exists' in str(e).lower():
                     print(f"ℹ️  Bucket already exists: {bucket_name} ({bucket_id})")
                 else:
-                    print(f"⚠️  Bucket creation error for {bucket_name}: {e}")
+                    print(f"Bucket creation error for {bucket_name}: {e}")
         
         print("\n✨ Appwrite setup completed successfully!")
-        print(f"\n📊 Summary:")
+        print(f"\nSummary:")
         print(f"   Database ID: {config.APPWRITE_DATABASE_ID}")
         print(f"   Collection ID: {config.APPWRITE_COLLECTION_ID}")
         print(f"   Healthcare Bucket: {config.APPWRITE_BUCKET_HEALTHCARE}")
@@ -222,7 +222,7 @@ def setup_appwrite():
         return True
         
     except Exception as e:
-        print(f"\n❌ Setup failed: {e}")
+        print(f"\nSetup failed: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -233,5 +233,5 @@ if __name__ == '__main__':
         success = setup_appwrite()
         sys.exit(0 if success else 1)
     except ValueError as e:
-        print(f"❌ Configuration error: {e}")
+        print(f"Configuration error: {e}")
         sys.exit(1)

@@ -177,7 +177,7 @@ async def upload_image(file: UploadFile = File(...)):
         })
         
     except Exception as e:
-        logger.error(f"❌ Upload error: {e}")
+        logger.error(f"Upload error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/upload-and-store")

@@ -24,8 +24,8 @@ def upload_all_categories():
     logger.info("\n" + "#"*70)
     logger.info("🚀 MASTER UPLOAD - ALL CATEGORIES")
     logger.info("#"*70)
-    logger.info("📦 Model: ResNet-50 (512D feature vectors)")
-    logger.info("☁️  Target: Appwrite Cloud (Frankfurt)")
+    logger.info("Model: ResNet-50 (512D feature vectors)")
+    logger.info(" Target: Appwrite Cloud (Frankfurt)")
     logger.info("🗂️  Categories: Healthcare, Satellite, Surveillance")
     logger.info("#"*70 + "\n")
     
@@ -38,7 +38,7 @@ def upload_all_categories():
         success, failed = upload_healthcare_images()
         results['healthcare'] = {'success': success, 'failed': failed}
     except Exception as e:
-        logger.error(f"❌ Healthcare upload error: {e}")
+        logger.error(f"Healthcare upload error: {e}")
         results['healthcare'] = {'success': 0, 'failed': 0}
     
     # Upload Satellite
@@ -47,7 +47,7 @@ def upload_all_categories():
         success, failed = upload_satellite_images()
         results['satellite'] = {'success': success, 'failed': failed}
     except Exception as e:
-        logger.error(f"❌ Satellite upload error: {e}")
+        logger.error(f"Satellite upload error: {e}")
         results['satellite'] = {'success': 0, 'failed': 0}
     
     # Upload Surveillance
@@ -56,7 +56,7 @@ def upload_all_categories():
         success, failed = upload_surveillance_images()
         results['surveillance'] = {'success': success, 'failed': failed}
     except Exception as e:
-        logger.error(f"❌ Surveillance upload error: {e}")
+        logger.error(f"Surveillance upload error: {e}")
         results['surveillance'] = {'success': 0, 'failed': 0}
     
     # Final Summary
@@ -69,17 +69,17 @@ def upload_all_categories():
     logger.info("#"*70)
     
     for category, stats in results.items():
-        logger.info(f"{category.upper():15} - ✅ {stats['success']:3} "
-                   f"| ❌ {stats['failed']:3}")
+        logger.info(f"{category.upper():15} - {stats['success']:3} "
+                   f"| {stats['failed']:3}")
     
     logger.info("-"*70)
-    logger.info(f"{'TOTAL':15} - ✅ {total_success:3} | ❌ {total_failed:3}")
+    logger.info(f"{'TOTAL':15} - {total_success:3} | {total_failed:3}")
     logger.info(f"{'TIME':15} - ⏱️  {elapsed:.2f}s")
     logger.info("#"*70)
     
-    logger.info("\n✅ All images uploaded with 512D feature vectors!")
+    logger.info("\nAll images uploaded with 512D feature vectors!")
     logger.info("🌐 View at: https://fra.cloud.appwrite.io/console")
-    logger.info("🔍 Test similarity search in your app!")
+    logger.info("Test similarity search in your app!")
 
 
 if __name__ == "__main__":
@@ -87,7 +87,7 @@ if __name__ == "__main__":
         config.validate()
         upload_all_categories()
     except KeyboardInterrupt:
-        logger.warning("\n⚠️  Upload interrupted by user")
+        logger.warning("\nUpload interrupted by user")
     except Exception as e:
-        logger.error(f"❌ Fatal error: {e}")
+        logger.error(f"Fatal error: {e}")
         raise

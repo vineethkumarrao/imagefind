@@ -23,12 +23,12 @@ class UnifiedFeatureExtractor:
         Args:
             feature_dim: Dimension of output features (default: 512)
         """
-        logger.info(f"🔧 Initializing ResNet-50 feature extractor ({feature_dim}D)...")
+        logger.info(f"Initializing ResNet-50 feature extractor ({feature_dim}D)...")
         
         self.feature_dim = feature_dim
         
         # Load pre-trained ResNet-50
-        logger.info("📦 Loading pre-trained ResNet-50 model...")
+        logger.info("Loading pre-trained ResNet-50 model...")
         resnet = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V2)
         
         # Remove the final classification layer (FC) to get features
@@ -68,7 +68,7 @@ class UnifiedFeatureExtractor:
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model = self.model.to(self.device)
         
-        logger.info(f"✅ Feature extractor ready (Device: {self.device})")
+        logger.info(f"Feature extractor ready (Device: {self.device})")
         logger.info(f"   Input: 224x224 RGB images")
         logger.info(f"   Output: {feature_dim}D feature vectors")
         logger.info(f"   Model: ResNet-50 (ImageNet pre-trained)")
