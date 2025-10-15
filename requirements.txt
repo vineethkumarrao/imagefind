@@ -1,0 +1,26 @@
+# Backend Framework
+fastapi==0.115.0
+uvicorn[standard]==0.31.0
+python-multipart==0.0.12
+
+# Appwrite SDK
+appwrite==13.4.1
+
+# Deep Learning & Computer Vision
+torch==2.1.0
+torchvision==0.16.0
+Pillow==10.4.0
+
+# Quantum Computing
+qiskit==1.0.2
+qiskit-aer==0.13.3
+
+# Scientific Computing
+numpy==1.24.3
+scipy==1.11.3
+
+# Configuration & Environment
+python-dotenv==1.0.0
+
+# Utilities
+python-json-logger==2.0.7

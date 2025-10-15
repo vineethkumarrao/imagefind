@@ -1,0 +1,191 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Start Backend Server",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"backend_server.py"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"focus": false,
+				"echo": true,
+				"showReuseMessage": true,
+				"clear": false,
+				"group": "servers"
+			},
+			"runOptions": {
+				"instanceLimit": 1
+			}
+		},
+		{
+			"label": "Start Frontend Server",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"dev"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/frontend"
+			},
+			"isBackground": true,
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"focus": false,
+				"echo": true,
+				"showReuseMessage": true,
+				"clear": false,
+				"group": "servers"
+			},
+			"runOptions": {
+				"instanceLimit": 1
+			}
+		},
+		{
+			"label": "Start All Servers",
+			"dependsOn": [
+				"Start Backend Server",
+				"Start Frontend Server"
+			],
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Upload Healthcare Images",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"upload_healthcare.py"
+			],
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"focus": true,
+				"echo": true
+			}
+		},
+		{
+			"label": "Upload Satellite Images",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"upload_satellite.py"
+			],
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"focus": true,
+				"echo": true
+			}
+		},
+		{
+			"label": "Upload Surveillance Images",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"upload_surveillance.py"
+			],
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"focus": true,
+				"echo": true
+			}
+		},
+		{
+			"label": "Upload All Images",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"upload_all.py"
+			],
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"focus": true,
+				"echo": true
+			}
+		},
+		{
+			"label": "Setup Appwrite",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"setup_appwrite.py"
+			],
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"focus": true,
+				"echo": true
+			}
+		},
+		{
+			"label": "Update Collection (512D)",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"update_collection_512d.py"
+			],
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"focus": true,
+				"echo": true
+			}
+		},
+		{
+			"label": "Backend Server",
+			"type": "shell",
+			"command": "python backend_server.py",
+			"isBackground": true
+		},
+		{
+			"label": "Backend Server Restart",
+			"type": "shell",
+			"command": "python backend_server.py",
+			"isBackground": true
+		},
+		{
+			"label": "Upload All Images",
+			"type": "shell",
+			"command": "python upload_all.py",
+			"isBackground": false
+		},
+		{
+			"label": "Backend with 512D",
+			"type": "shell",
+			"command": "$env:FEATURE_DIMENSION='512'; python backend_server.py",
+			"isBackground": true
+		},
+		{
+			"label": "Backend Fresh Start",
+			"type": "shell",
+			"command": "python backend_server.py",
+			"isBackground": true
+		},
+		{
+			"label": "Backend Final",
+			"type": "shell",
+			"command": "python backend_server.py",
+			"isBackground": true
+		}
+	]
+}

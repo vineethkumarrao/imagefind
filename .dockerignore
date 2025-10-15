@@ -1,0 +1,41 @@
+# Ignore Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Ignore uploads
+uploads/*
+!uploads/.gitkeep
+
+# Ignore environment
+.env
+.venv
+venv/
+ENV/
+
+# Ignore IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore OS
+.DS_Store
+Thumbs.db
+
+# Ignore model weights (large files)
+*.pth
+*.pt
+*.onnx
+
+# Ignore logs
+*.log
+
+# Ignore test images (optional)
+testingimages/*
+!testingimages/.gitkeep

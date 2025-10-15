@@ -1,0 +1,48 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Backend Server",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend_server.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Python: Upload All Images",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/upload_all.py",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Python: Upload Healthcare",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/upload_healthcare.py",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Python: Upload Satellite",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/upload_satellite.py",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Python: Upload Surveillance",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/upload_surveillance.py",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        }
+    ]
+}
