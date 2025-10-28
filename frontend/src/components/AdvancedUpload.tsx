@@ -1,6 +1,6 @@
 /**
  * Advanced Upload Component with Category Selection and Upload Mode
- * Supports backend API upload with storage and direct Appwrite upload
+ * Supports backend API upload with Cloudinary storage and Pinecone indexing
  */
 
 import React, { useCallback, useState } from "react";
@@ -30,7 +30,6 @@ import SatelliteIcon from "@mui/icons-material/Satellite";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import {
   uploadImage,
-  uploadToAppwriteDirect,
   uploadAndStore,
 } from "../services/api";
 import type { UploadResponse } from "../types";
@@ -39,7 +38,7 @@ interface AdvancedUploadProps {
   onUploadSuccess: (response: UploadResponse) => void;
 }
 
-type UploadMode = "search" | "store" | "direct";
+type UploadMode = "search" | "store";
 type Category = "healthcare" | "satellite" | "surveillance";
 
 const CATEGORY_ICONS = {
@@ -65,40 +64,38 @@ export const AdvancedUpload: React.FC<AdvancedUploadProps> = ({
     async (acceptedFiles: File[]) => {
       if (acceptedFiles.length === 0) return;
 
-      const file = acceptedFiles[0];
       setUploading(true);
       setError(null);
-      setUploadProgress("Starting upload...");
+      setUploadProgress(`Starting upload of ${acceptedFiles.length} image(s)...`);
 
       try {
-        let response: UploadResponse;
+        // Process all files
+        for (let i = 0; i < acceptedFiles.length; i++) {
+          const file = acceptedFiles[i];
+          setUploadProgress(`Processing image ${i + 1} of ${acceptedFiles.length}...`);
 
-        if (uploadMode === "search") {
-          // Upload via backend API for similarity search only (no storage)
-          setUploadProgress("Uploading to backend...");
-          response = await uploadImage(file, (progress) => {
-            setUploadProgress(`Processing: ${progress}%`);
-          });
-        } else if (uploadMode === "store") {
-          // Upload and store in Appwrite with category
-          setUploadProgress("Uploading and storing...");
-          response = await uploadAndStore(file, category, (progress) => {
-            setUploadProgress(`Storing: ${progress}%`);
-          });
-        } else {
-          // Direct upload to Appwrite (fastest, no backend)
-          setUploadProgress("Uploading directly to Appwrite...");
-          response = await uploadToAppwriteDirect(
-            file,
-            category,
-            (progress) => {
-              setUploadProgress(`Uploading: ${progress}%`);
-            }
-          );
+          let response: UploadResponse;
+
+          if (uploadMode === "search") {
+            // Upload via backend API for similarity search only (no storage)
+            setUploadProgress(`Uploading image ${i + 1} to backend...`);
+            response = await uploadImage(file, (progress) => {
+              setUploadProgress(`Image ${i + 1}: Processing ${progress}%`);
+            });
+          } else {
+            // Upload and store in Cloudinary + index in Pinecone with category
+            setUploadProgress(`Uploading and storing image ${i + 1}...`);
+            response = await uploadAndStore(file, category, (progress) => {
+              setUploadProgress(`Image ${i + 1}: Storing ${progress}%`);
+            });
+          }
+
+          // Only show results for the last image
+          if (i === acceptedFiles.length - 1) {
+            setUploadProgress("All uploads complete!");
+            onUploadSuccess(response);
+          }
         }
-
-        setUploadProgress("Upload complete!");
-        onUploadSuccess(response);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Upload failed");
         setUploadProgress("");
@@ -115,7 +112,7 @@ export const AdvancedUpload: React.FC<AdvancedUploadProps> = ({
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".gif", ".webp"],
     },
-    multiple: false,
+    multiple: true,
     disabled: uploading,
   });
 
@@ -124,9 +121,7 @@ export const AdvancedUpload: React.FC<AdvancedUploadProps> = ({
       case "search":
         return "Search for similar images without storing";
       case "store":
-        return "Upload, extract features, and store in database";
-      case "direct":
-        return "Fast direct upload to Appwrite storage";
+        return "Upload to Cloudinary, index in Pinecone, and search similar";
       default:
         return "";
     }
@@ -162,15 +157,11 @@ export const AdvancedUpload: React.FC<AdvancedUploadProps> = ({
               <StorageIcon sx={{ mr: 1, fontSize: 18 }} />
               Store & Search
             </ToggleButton>
-            <ToggleButton value="direct">
-              <CloudUploadIcon sx={{ mr: 1, fontSize: 18 }} />
-              Direct Upload
-            </ToggleButton>
           </ToggleButtonGroup>
         </Box>
 
-        {/* Category Selector (only for store and direct modes) */}
-        {(uploadMode === "store" || uploadMode === "direct") && (
+        {/* Category Selector (only for store mode) */}
+        {uploadMode === "store" && (
           <Box sx={{ display: "flex", justifyContent: "center" }}>
             <FormControl size="small" sx={{ minWidth: 200 }}>
               <InputLabel>Category</InputLabel>
@@ -207,13 +198,7 @@ export const AdvancedUpload: React.FC<AdvancedUploadProps> = ({
         <Box sx={{ textAlign: "center" }}>
           <Chip
             label={getModeDescription()}
-            color={
-              uploadMode === "search"
-                ? "primary"
-                : uploadMode === "store"
-                ? "secondary"
-                : "info"
-            }
+            color={uploadMode === "search" ? "primary" : "secondary"}
             size="small"
           />
         </Box>
@@ -252,10 +237,10 @@ export const AdvancedUpload: React.FC<AdvancedUploadProps> = ({
               sx={{ fontSize: 60, color: "primary.main", mb: 2 }}
             />
             <Typography variant="h5" gutterBottom>
-              {isDragActive ? "Drop image here" : "Upload Image"}
+              {isDragActive ? "Drop images here" : "Upload Images"}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Drag & drop an image here, or click to select
+              Drag & drop images here, or click to select multiple images
             </Typography>
             <Typography
               variant="caption"

@@ -34,14 +34,12 @@ def upload_healthcare_images(image_dir: str = "data/professional_images/healthca
     """
     try:
         # Initialize components
-        logger.info("🚀 Initializing Healthcare Uploader...")
-        
+        logger.info("Initializing Healthcare Uploader...")
         feature_extractor = UnifiedFeatureExtractor(
             model_path=config.MODEL_WEIGHTS_PATH,
             feature_dim=config.FEATURE_DIMENSION
         )
         logger.info("Feature extractor initialized")
-        
         retrieval_system = AppwriteQuantumRetrieval()
         logger.info("Appwrite system initialized")
         
@@ -57,7 +55,7 @@ def upload_healthcare_images(image_dir: str = "data/professional_images/healthca
             logger.warning(f"No images found in {image_dir}")
             return
         
-        logger.info(f"📁 Found {len(image_files)} healthcare images")
+        logger.info(f"Found {len(image_files)} healthcare images")
         
         # Upload images
         success_count = 0
@@ -71,7 +69,7 @@ def upload_healthcare_images(image_dir: str = "data/professional_images/healthca
                 image = Image.open(image_file).convert('RGB')
                 
                 # Extract features
-                logger.info("🧠 Extracting features...")
+                logger.info("Extracting features...")
                 features = feature_extractor.extract_features(image)
                 features_list = features.cpu().numpy().tolist()
                 
@@ -80,7 +78,7 @@ def upload_healthcare_images(image_dir: str = "data/professional_images/healthca
                     image_data = f.read()
                 
                 # Upload to Appwrite
-                logger.info("📤 Uploading to Appwrite...")
+                logger.info("Uploading to Appwrite...")
                 result = retrieval_system.upload_image(
                     image_data=image_data,
                     filename=image_file.name,
@@ -98,11 +96,11 @@ def upload_healthcare_images(image_dir: str = "data/professional_images/healthca
         
         # Summary
         logger.info(f"\n{'='*60}")
-        logger.info(f"Upload Summary")
+        logger.info("Upload Summary")
         logger.info(f"{'='*60}")
         logger.info(f"Successful: {success_count}")
         logger.info(f"Errors: {error_count}")
-        logger.info(f"📁 Total: {len(image_files)}")
+        logger.info(f"Total: {len(image_files)}")
         logger.info(f"{'='*60}\n")
         
     except Exception as e:

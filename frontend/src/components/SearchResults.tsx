@@ -19,7 +19,7 @@ interface SearchResultsProps {
 }
 
 export const SearchResults: React.FC<SearchResultsProps> = ({ results }) => {
-  if (!results) return null;
+  if (!results || !results.similar_images) return null;
 
   return (
     <Box sx={{ width: '100%', maxWidth: 1400, mx: 'auto' }}>
@@ -29,34 +29,32 @@ export const SearchResults: React.FC<SearchResultsProps> = ({ results }) => {
         </Typography>
         
         <Box sx={{ display: 'flex', gap: 2, mb: 2, flexWrap: 'wrap' }}>
+          {results.uploaded_image && (
+            <Chip
+              label={`Uploaded: ${results.uploaded_image.filename}`}
+              color="primary"
+              variant="outlined"
+            />
+          )}
           <Chip
-            label={`Query: ${results.query_image}`}
-            color="primary"
-            variant="outlined"
-          />
-          <Chip
-            label={`Total Results: ${results.total_results}`}
+            label={`Total Similar: ${results.similar_images.length}`}
             color="info"
-          />
-          <Chip
-            label={`High Confidence: ${results.high_confidence_results}`}
-            color="success"
           />
         </Box>
 
-        {results.results.length === 0 ? (
+        {results.similar_images.length === 0 ? (
           <Alert severity="info">
             No similar images found. Try uploading a different image.
           </Alert>
         ) : (
           <>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              Showing {results.results.length} similar images with quantum-enhanced similarity scores
+              Showing {results.similar_images.length} similar images
             </Typography>
 
             <Grid container spacing={3}>
-              {results.results.map((image) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={image.document_id}>
+              {results.similar_images.map((image) => (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={image.id}>
                   <ImageCard image={image} />
                 </Grid>
               ))}

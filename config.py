@@ -7,30 +7,22 @@ load_dotenv()
 class Config:
     """Configuration class for the Quantum Image Retrieval System"""
     
-    # Appwrite Configuration
-    APPWRITE_ENDPOINT = os.getenv('APPWRITE_ENDPOINT', 'https://fra.cloud.appwrite.io/v1')
-    APPWRITE_PROJECT_ID = os.getenv('APPWRITE_PROJECT_ID', '68eed0ee0033a7ceca80')
-    APPWRITE_API_KEY = os.getenv('APPWRITE_API_KEY', '')
+    # Cloudinary Configuration
+    CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME', '')
+    CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY', '')
+    CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET', '')
     
-    # Appwrite Database
-    APPWRITE_DATABASE_ID = os.getenv('APPWRITE_DATABASE_ID', 'quantum-images-db')
-    APPWRITE_COLLECTION_ID = os.getenv('APPWRITE_COLLECTION_ID', 'feature-vectors')
-    
-    # Aliases for convenience
-    DATABASE_ID = APPWRITE_DATABASE_ID
-    COLLECTION_ID = APPWRITE_COLLECTION_ID
-    
-    # Appwrite Storage Buckets
-    APPWRITE_BUCKET_HEALTHCARE = os.getenv('APPWRITE_BUCKET_HEALTHCARE', 'healthcare-images')
-    APPWRITE_BUCKET_SATELLITE = os.getenv('APPWRITE_BUCKET_SATELLITE', 'satellite-images')
-    APPWRITE_BUCKET_SURVEILLANCE = os.getenv('APPWRITE_BUCKET_SURVEILLANCE', 'surveillance-images')
+    # Pinecone Configuration
+    PINECONE_API_KEY = os.getenv('PINECONE_API_KEY', '')
+    PINECONE_ENVIRONMENT = os.getenv('PINECONE_ENVIRONMENT', 'us-east-1')
+    PINECONE_INDEX_NAME = os.getenv('PINECONE_INDEX_NAME', 'quantum-images-prod')
     
     # Model Configuration
     MODEL_WEIGHTS_PATH = os.getenv('MODEL_WEIGHTS_PATH', 'consistent_resnet50_8d.pth')
     
     # Feature extraction
     FEATURE_EXTRACTOR = 'resnet50'  # Options: 'resnet50', 'vgg16'
-    FEATURE_DIMENSION = 2048         # Dimension of feature vectors (ResNet-50 native)
+    FEATURE_DIMENSION = int(os.getenv('FEATURE_DIMENSION', '2048'))  # 2048 or 512
     
     # Quantum Configuration
     USE_QUANTUM_INSPIRED = os.getenv('USE_QUANTUM_INSPIRED', 'True').lower() == 'true'
@@ -44,23 +36,20 @@ class Config:
     
     # Confidence Thresholds
     HIGH_CONFIDENCE_THRESHOLD = float(os.getenv('HIGH_CONFIDENCE_THRESHOLD', '0.95'))
-    GOOD_CONFIDENCE_THRESHOLD = float(os.getenv('GOOD_CONFIDENCE_THRESHOLD', '0.0'))
-    MINIMUM_MATCH_THRESHOLD = float(os.getenv('MINIMUM_MATCH_THRESHOLD', '0.85'))
+    GOOD_CONFIDENCE_THRESHOLD = float(os.getenv('GOOD_CONFIDENCE_THRESHOLD', '0.85'))
+    MINIMUM_MATCH_THRESHOLD = float(os.getenv('MINIMUM_MATCH_THRESHOLD', '0.80'))
     
-    # Bucket mapping
-    CATEGORY_BUCKET_MAP = {
-        'healthcare': APPWRITE_BUCKET_HEALTHCARE,
-        'satellite': APPWRITE_BUCKET_SATELLITE,
-        'surveillance': APPWRITE_BUCKET_SURVEILLANCE
-    }
+    # Image categories
+    CATEGORIES = ['healthcare', 'satellite', 'surveillance']
     
     @classmethod
     def validate(cls):
         """Validate required configuration"""
         required_vars = {
-            'APPWRITE_ENDPOINT': cls.APPWRITE_ENDPOINT,
-            'APPWRITE_PROJECT_ID': cls.APPWRITE_PROJECT_ID,
-            'APPWRITE_API_KEY': cls.APPWRITE_API_KEY,
+            'CLOUDINARY_CLOUD_NAME': cls.CLOUDINARY_CLOUD_NAME,
+            'CLOUDINARY_API_KEY': cls.CLOUDINARY_API_KEY,
+            'CLOUDINARY_API_SECRET': cls.CLOUDINARY_API_SECRET,
+            'PINECONE_API_KEY': cls.PINECONE_API_KEY,
         }
         
         missing = [key for key, value in required_vars.items() if not value]
@@ -72,3 +61,4 @@ class Config:
 
 # Create config instance
 config = Config()
+config.validate()

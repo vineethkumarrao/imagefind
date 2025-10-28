@@ -1,6 +1,6 @@
 /**
  * Image Upload Component with Drag & Drop
- * Supports both backend API upload and direct Appwrite upload
+ * Uploads images via backend API (Cloudinary + Pinecone)
  */
 
 import React, { useCallback, useState } from "react";
@@ -11,59 +11,49 @@ import {
   Typography,
   CircularProgress,
   Alert,
-  ToggleButtonGroup,
-  ToggleButton,
   LinearProgress,
-  Chip,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import StorageIcon from "@mui/icons-material/Storage";
-import SmartToyIcon from "@mui/icons-material/SmartToy";
-import { uploadImage, uploadToAppwriteDirect } from "../services/api";
+import { uploadImage } from "../services/api";
 import type { UploadResponse } from "../types";
 
 interface ImageUploadProps {
   onUploadSuccess: (response: UploadResponse) => void;
 }
 
-type UploadMode = "backend" | "direct";
-
 export const ImageUpload: React.FC<ImageUploadProps> = ({
   onUploadSuccess,
 }) => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [uploadMode, setUploadMode] = useState<UploadMode>("backend");
   const [uploadProgress, setUploadProgress] = useState<string>("");
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       if (acceptedFiles.length === 0) return;
 
-      const file = acceptedFiles[0];
       setUploading(true);
       setError(null);
-      setUploadProgress("Starting upload...");
+      setUploadProgress(`Starting upload of ${acceptedFiles.length} image(s)...`);
 
       try {
-        let response: UploadResponse;
+        // Process all files
+        for (let i = 0; i < acceptedFiles.length; i++) {
+          const file = acceptedFiles[i];
+          setUploadProgress(`Processing image ${i + 1} of ${acceptedFiles.length}...`);
 
-        if (uploadMode === "backend") {
           // Upload via backend API (includes feature extraction and similarity search)
-          setUploadProgress("Uploading to backend...");
-          response = await uploadImage(file, (progress) => {
-            setUploadProgress(`Processing: ${progress}%`);
+          setUploadProgress(`Uploading image ${i + 1} to backend...`);
+          const response = await uploadImage(file, (progress) => {
+            setUploadProgress(`Image ${i + 1}: Processing ${progress}%`);
           });
-        } else {
-          // Upload directly to Appwrite storage (faster, no backend processing)
-          setUploadProgress("Uploading directly to Appwrite...");
-          response = await uploadToAppwriteDirect(file, (progress) => {
-            setUploadProgress(`Uploading: ${progress}%`);
-          });
-        }
 
-        setUploadProgress("Upload complete!");
-        onUploadSuccess(response);
+          // Only show results for the last image
+          if (i === acceptedFiles.length - 1) {
+            setUploadProgress("All uploads complete!");
+            onUploadSuccess(response);
+          }
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Upload failed");
         setUploadProgress("");
@@ -72,7 +62,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         setTimeout(() => setUploadProgress(""), 2000);
       }
     },
-    [onUploadSuccess, uploadMode]
+    [onUploadSuccess]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -80,62 +70,12 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".gif", ".webp"],
     },
-    multiple: false,
+    multiple: true,
     disabled: uploading,
   });
 
   return (
     <Box sx={{ width: "100%", maxWidth: 800, mx: "auto", mb: 4 }}>
-      {/* Upload Mode Selector */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          mb: 2,
-          gap: 2,
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="body2" color="text.secondary">
-          Upload Method:
-        </Typography>
-        <ToggleButtonGroup
-          value={uploadMode}
-          exclusive
-          onChange={(_, newMode) => newMode && setUploadMode(newMode)}
-          size="small"
-          disabled={uploading}
-        >
-          <ToggleButton value="backend">
-            <SmartToyIcon sx={{ mr: 1, fontSize: 18 }} />
-            Backend API
-          </ToggleButton>
-          <ToggleButton value="direct">
-            <StorageIcon sx={{ mr: 1, fontSize: 18 }} />
-            Direct Upload
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </Box>
-
-      {/* Mode Description */}
-      <Box sx={{ textAlign: "center", mb: 2 }}>
-        {uploadMode === "backend" ? (
-          <Chip
-            label="Includes AI feature extraction & similarity search"
-            color="primary"
-            size="small"
-            icon={<SmartToyIcon />}
-          />
-        ) : (
-          <Chip
-            label="Fast direct upload to Appwrite storage"
-            color="secondary"
-            size="small"
-            icon={<StorageIcon />}
-          />
-        )}
-      </Box>
-
       <Paper
         {...getRootProps()}
         sx={{
@@ -168,10 +108,10 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
               sx={{ fontSize: 60, color: "primary.main", mb: 2 }}
             />
             <Typography variant="h5" gutterBottom>
-              {isDragActive ? "Drop image here" : "Upload Image"}
+              {isDragActive ? "Drop images here" : "Upload Images"}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Drag & drop an image here, or click to select
+              Drag & drop images here, or click to select multiple images
             </Typography>
             <Typography
               variant="caption"

@@ -15,17 +15,16 @@ import {
   IconButton,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { getImageUrl } from '../services/api';
-import { CATEGORY_COLORS, type ImageResult } from '../types';
+import { CATEGORY_COLORS, type SimilarImage } from '../types';
 
 interface ImageCardProps {
-  image: ImageResult;
+  image: SimilarImage;
 }
 
 export const ImageCard: React.FC<ImageCardProps> = ({ image }) => {
   const [open, setOpen] = useState(false);
-  const categoryInfo = CATEGORY_COLORS[image.category];
-  const similarityPercent = (image.similarity * 100).toFixed(1);
+  const categoryInfo = CATEGORY_COLORS[image.category] || CATEGORY_COLORS.satellite;
+  const similarityPercent = Math.min(100, image.similarity * 100).toFixed(1);
 
   return (
     <>
@@ -45,7 +44,7 @@ export const ImageCard: React.FC<ImageCardProps> = ({ image }) => {
         <CardMedia
           component="img"
           height="200"
-          image={getImageUrl(image.image_id)}
+          image={image.image_url}
           alt={image.filename}
           sx={{ objectFit: 'cover' }}
         />
@@ -117,7 +116,7 @@ export const ImageCard: React.FC<ImageCardProps> = ({ image }) => {
             <CloseIcon />
           </IconButton>
           <img
-            src={getImageUrl(image.image_id)}
+            src={image.image_url}
             alt={image.filename}
             style={{ width: '100%', display: 'block' }}
           />
@@ -137,7 +136,7 @@ export const ImageCard: React.FC<ImageCardProps> = ({ image }) => {
               Similarity: {similarityPercent}%
             </Typography>
             <Typography variant="caption" color="text.secondary" display="block">
-              Image ID: {image.image_id}
+              Image ID: {image.id}
             </Typography>
           </Box>
         </Box>
@@ -145,3 +144,4 @@ export const ImageCard: React.FC<ImageCardProps> = ({ image }) => {
     </>
   );
 };
+

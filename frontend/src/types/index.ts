@@ -2,49 +2,34 @@
  * TypeScript interfaces for Quantum Image Retrieval System
  */
 
-export interface ImageResult {
-  image_id: string;
-  document_id: string;
+export interface SimilarImage {
+  id: string;
   filename: string;
-  category: "healthcare" | "satellite" | "surveillance";
+  category: string;
   similarity: number;
-  bucket_id: string;
-  storage_path: string;
+  image_url: string;
+}
+
+export interface UploadedImage {
+  filename: string;
+  cloudinary_url: string;
 }
 
 export interface UploadResponse {
   success: boolean;
-  query_image: string;
-  total_results: number;
-  high_confidence_results: number;
-  results: ImageResult[];
-  // Optional fields for different upload modes
-  status?: string;
-  message?: string;
-  file_id?: string;
-  exact_match?: ImageResult | null;
+  similar_images: SimilarImage[];
+  uploaded_image?: UploadedImage;
 }
 
 export interface SearchResponse {
   success: boolean;
-  total_results: number;
-  results: ImageResult[];
+  similar_images: SimilarImage[];
 }
 
 export interface Statistics {
-  total_images: number;
-  categories: {
-    healthcare: number;
-    satellite: number;
-    surveillance: number;
-  };
-  buckets: {
-    healthcare: string;
-    satellite: string;
-    surveillance: string;
-  };
-  quantum_mode: string;
-  feature_dimension: number;
+  total_vector_count: number;
+  dimension: number;
+  index_name: string;
 }
 
 export interface StatsResponse {

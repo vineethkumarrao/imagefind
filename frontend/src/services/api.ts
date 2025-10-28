@@ -1,10 +1,9 @@
 /**
  * API Client for backend communication
+ * Updated for Cloudinary + Pinecone backend
  */
 
 import axios from "axios";
-import { storage } from "./appwrite";
-import { ID } from "appwrite";
 import type {
   UploadResponse,
   SearchResponse,
@@ -13,8 +12,6 @@ import type {
 } from "../types";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-const APPWRITE_BUCKET_ID =
-  import.meta.env.VITE_APPWRITE_BUCKET_ID || "68eed0f200256bafa59e";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -49,66 +46,6 @@ export const uploadImage = async (
   });
 
   return response.data;
-};
-
-/**
- * Upload an image directly to Appwrite storage (no backend processing)
- * Useful for faster uploads when you don't need immediate similarity search
- */
-export const uploadToAppwriteDirect = async (
-  file: File,
-  category: string,
-  onProgress?: (progress: number) => void
-): Promise<UploadResponse> => {
-  try {
-    // Map category to bucket ID
-    const bucketMap: Record<string, string> = {
-      healthcare: APPWRITE_BUCKET_ID,
-      satellite:
-        import.meta.env.VITE_APPWRITE_BUCKET_SATELLITE ||
-        "68eed0f500197ae0eaa5",
-      surveillance:
-        import.meta.env.VITE_APPWRITE_BUCKET_SURVEILLANCE ||
-        "68eed0fa00280d73f8c2",
-    };
-
-    const bucketId = bucketMap[category] || APPWRITE_BUCKET_ID;
-
-    // Generate unique file ID
-    const fileId = ID.unique();
-
-    // Upload to Appwrite storage
-    const uploadedFile = await storage.createFile(
-      bucketId,
-      fileId,
-      file,
-      undefined,
-      (progress) => {
-        if (onProgress) {
-          const percentCompleted = Math.round(
-            (progress.chunksUploaded / progress.chunksTotal) * 100
-          );
-          onProgress(percentCompleted);
-        }
-      }
-    );
-
-    // Return a response similar to backend upload
-    return {
-      success: true,
-      status: "uploaded",
-      message: `Image uploaded successfully to ${category} category`,
-      query_image: file.name,
-      file_id: uploadedFile.$id,
-      total_results: 0,
-      high_confidence_results: 0,
-      exact_match: null,
-      results: [],
-    };
-  } catch (error) {
-    console.error("Direct upload error:", error);
-    throw new Error("Failed to upload image to Appwrite");
-  }
 };
 
 /**

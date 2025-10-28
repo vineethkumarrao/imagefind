@@ -1,191 +1,155 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "Start Backend Server",
-			"type": "shell",
-			"command": "python",
-			"args": [
-				"backend_server.py"
-			],
-			"isBackground": true,
-			"problemMatcher": [],
-			"presentation": {
-				"reveal": "always",
-				"panel": "dedicated",
-				"focus": false,
-				"echo": true,
-				"showReuseMessage": true,
-				"clear": false,
-				"group": "servers"
-			},
-			"runOptions": {
-				"instanceLimit": 1
-			}
-		},
-		{
-			"label": "Start Frontend Server",
-			"type": "shell",
-			"command": "npm",
-			"args": [
-				"run",
-				"dev"
-			],
-			"options": {
-				"cwd": "${workspaceFolder}/frontend"
-			},
-			"isBackground": true,
-			"problemMatcher": [],
-			"presentation": {
-				"reveal": "always",
-				"panel": "dedicated",
-				"focus": false,
-				"echo": true,
-				"showReuseMessage": true,
-				"clear": false,
-				"group": "servers"
-			},
-			"runOptions": {
-				"instanceLimit": 1
-			}
-		},
-		{
-			"label": "Start All Servers",
-			"dependsOn": [
-				"Start Backend Server",
-				"Start Frontend Server"
-			],
-			"problemMatcher": [],
-			"presentation": {
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "Upload Healthcare Images",
-			"type": "shell",
-			"command": "python",
-			"args": [
-				"upload_healthcare.py"
-			],
-			"problemMatcher": [],
-			"presentation": {
-				"reveal": "always",
-				"panel": "dedicated",
-				"focus": true,
-				"echo": true
-			}
-		},
-		{
-			"label": "Upload Satellite Images",
-			"type": "shell",
-			"command": "python",
-			"args": [
-				"upload_satellite.py"
-			],
-			"problemMatcher": [],
-			"presentation": {
-				"reveal": "always",
-				"panel": "dedicated",
-				"focus": true,
-				"echo": true
-			}
-		},
-		{
-			"label": "Upload Surveillance Images",
-			"type": "shell",
-			"command": "python",
-			"args": [
-				"upload_surveillance.py"
-			],
-			"problemMatcher": [],
-			"presentation": {
-				"reveal": "always",
-				"panel": "dedicated",
-				"focus": true,
-				"echo": true
-			}
-		},
-		{
-			"label": "Upload All Images",
-			"type": "shell",
-			"command": "python",
-			"args": [
-				"upload_all.py"
-			],
-			"problemMatcher": [],
-			"presentation": {
-				"reveal": "always",
-				"panel": "dedicated",
-				"focus": true,
-				"echo": true
-			}
-		},
-		{
-			"label": "Setup Appwrite",
-			"type": "shell",
-			"command": "python",
-			"args": [
-				"setup_appwrite.py"
-			],
-			"problemMatcher": [],
-			"presentation": {
-				"reveal": "always",
-				"panel": "dedicated",
-				"focus": true,
-				"echo": true
-			}
-		},
-		{
-			"label": "Update Collection (512D)",
-			"type": "shell",
-			"command": "python",
-			"args": [
-				"update_collection_512d.py"
-			],
-			"problemMatcher": [],
-			"presentation": {
-				"reveal": "always",
-				"panel": "dedicated",
-				"focus": true,
-				"echo": true
-			}
-		},
-		{
-			"label": "Backend Server",
-			"type": "shell",
-			"command": "python backend_server.py",
-			"isBackground": true
-		},
-		{
-			"label": "Backend Server Restart",
-			"type": "shell",
-			"command": "python backend_server.py",
-			"isBackground": true
-		},
-		{
-			"label": "Upload All Images",
-			"type": "shell",
-			"command": "python upload_all.py",
-			"isBackground": false
-		},
-		{
-			"label": "Backend with 512D",
-			"type": "shell",
-			"command": "$env:FEATURE_DIMENSION='512'; python backend_server.py",
-			"isBackground": true
-		},
-		{
-			"label": "Backend Fresh Start",
-			"type": "shell",
-			"command": "python backend_server.py",
-			"isBackground": true
-		},
-		{
-			"label": "Backend Final",
-			"type": "shell",
-			"command": "python backend_server.py",
-			"isBackground": true
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Backend Server",
+      "type": "shell",
+      "command": "python",
+      "args": ["-m", "uvicorn", "backend_server:app", "--host", "0.0.0.0", "--port", "8000", "--reload"],
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Echo Test Task",
+      "type": "shell",
+      "command": "echo",
+      "args": ["VS Code Task System Working!"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Test Python Minimal",
+      "type": "shell",
+      "command": "python",
+      "args": ["--version"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Start Frontend Server",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "dev"],
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Start Both Servers",
+      "dependsOn": ["Start Backend Server", "Start Frontend Server"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Test Backend Connection",
+      "type": "shell",
+      "command": "python",
+      "args": ["test_connection.py"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Test Upload (3 Categories)",
+      "type": "shell",
+      "command": "python",
+      "args": ["test_upload.py"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    }
+  ]
 }
+      "label": "Start Frontend Server",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "dev"],
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false,
+        "echo": true,
+        "showReuseMessage": true,
+        "clear": false,
+        "group": "servers"
+      },
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Start Both Servers",
+      "dependsOn": ["Start Backend Server", "Start Frontend Server"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Test Backend Connection",
+      "type": "shell",
+      "command": "python",
+      "args": ["test_connection.py"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Test Upload (3 Categories)",
+      "type": "shell",
+      "command": "python",
+      "args": ["test_upload.py"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true,
+        "echo": true,
+        "clear": true,
+        "group": "servers"
+      }
+    }
+  ]
+}
+              "panel": "shared"
+            }
+          }
+        ]
+      }
