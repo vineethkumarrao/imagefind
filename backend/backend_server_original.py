@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from config import config
+import config
 from services.cloudinary_service import CloudinaryImageService
 from services.pinecone_service import PineconeVectorService
 
