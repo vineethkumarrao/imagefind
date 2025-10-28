@@ -1,6 +1,6 @@
 """
-Upload Satellite Images to Appwrite
-Extracts 2048D features using ResNet-50 and stores in satellite-images bucket
+Upload Satellite Images to Cloudinary and Pinecone
+Extracts 2048D features using ResNet-50 and stores in Pinecone
 """
 
 import time
@@ -9,8 +9,9 @@ from PIL import Image
 import logging
 
 from config import config
-from unified_feature_extractor import UnifiedFeatureExtractor
-from src.cloud.appwrite_retrieval import AppwriteQuantumRetrieval
+from ml.unified_feature_extractor import UnifiedFeatureExtractor
+from services.cloudinary_service import CloudinaryImageService
+from services.pinecone_service import PineconeVectorService
 
 logging.basicConfig(
     level=logging.INFO,
@@ -28,15 +29,17 @@ def upload_satellite_images():
     
     # Initialize
     logger.info("\nInitializing ResNet-50 feature extractor (2048D native)...")
-    feature_extractor = UnifiedFeatureExtractor(feature_dim=2048)
+    feature_extractor = UnifiedFeatureExtractor(feature_dim=2048, use_amp=True)
     
-    logger.info(" Connecting to Appwrite...")
-    retrieval = AppwriteQuantumRetrieval()
+    logger.info("☁️ Connecting to Cloudinary...")
+    cloudinary_service = CloudinaryImageService()
+    
+    logger.info("📊 Connecting to Pinecone...")
+    pinecone_service = PineconeVectorService()
     
     # Setup paths
-    images_folder = Path("testingimages/satellite")
+    images_folder = Path("data/testingimages/satellite")
     category = "satellite"
-    bucket_id = "satellite-images"
     
     if not images_folder.exists():
         logger.error(f"Folder not found: {images_folder}")
@@ -44,7 +47,6 @@ def upload_satellite_images():
     
     # Get image files
     image_files = list(images_folder.glob("*.jpg")) + \
-                  list(images_folder.glob("*.jpeg"))
     
     if not image_files:
         logger.error(f"No images found in {images_folder}")
@@ -53,8 +55,7 @@ def upload_satellite_images():
     logger.info(f"\nFound {len(image_files)} satellite images")
     logger.info(f"📁 Folder: {images_folder.absolute()}")
     logger.info(f"🛰️  Category: {category}")
-    logger.info(f"🪣 Bucket: {bucket_id}")
-    logger.info("🧠 Model: ResNet-50 (512D vectors)")
+    logger.info(" Model: ResNet-50 (2048D vectors)")
     
     # Upload images
     success = 0
@@ -69,28 +70,37 @@ def upload_satellite_images():
             image = Image.open(image_path).convert('RGB')
             logger.info(f"   📐 Size: {image.size}")
             
-            # Extract 512D features
-            logger.info("   🧠 Extracting 512D features...")
-            features_list = feature_extractor.extract_features(image)
-            logger.info(f"   Extracted {len(features_list)}D vector")
+            # Extract 2048D features
+            logger.info("   🧠 Extracting 2048D features...")
+            features = feature_extractor.extract_features(image)
+            logger.info(f"   Extracted 2048D vector")
             
             # Read image as bytes
             with open(image_path, 'rb') as f:
                 image_bytes = f.read()
             
-            # Upload to Appwrite
-            logger.info(f"    Uploading to bucket: {bucket_id}...")
-            result = retrieval.upload_image(
-                image_data=image_bytes,
-                filename=image_path.name,
-                category=category,
-                features=features_list
+            # Upload to Cloudinary
+            logger.info(f"   ☁️ Uploading to Cloudinary...")
+            result = cloudinary_service.upload_image(
+                image_bytes,
+                image_path.name,
+                category
             )
+            
+            # Store in Pinecone
+            logger.info(f"   📊 Storing in Pinecone...")
+            vector_id = result['public_id'].replace('/', '_')
+            metadata = {
+                'filename': image_path.name,
+                'category': category,
+                'cloudinary_url': result['secure_url']
+            }
+            pinecone_service.upsert_vector(vector_id, features, metadata)
             
             if result:
                 success += 1
-                image_id = result.get('image_id', 'N/A')[:8]
-                logger.info(f"   SUCCESS - ID: {image_id}...")
+                public_id = result.get('public_id', 'N/A')[:8]
+                logger.info(f"   SUCCESS - ID: {public_id}...")
             else:
                 failed += 1
                 logger.error("   Upload failed")
@@ -121,7 +131,7 @@ if __name__ == "__main__":
     try:
         config.validate()
         upload_satellite_images()
-        logger.info("\nDone! View at: https://fra.cloud.appwrite.io/console")
+        logger.info("\n✅ Upload complete!")
     except KeyboardInterrupt:
         logger.warning("\nInterrupted by user")
     except Exception as e:

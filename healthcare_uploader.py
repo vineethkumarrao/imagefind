@@ -1,17 +1,17 @@
 """
-Healthcare Images Uploader for Appwrite
-Uploads healthcare images to Appwrite storage and extracts features
+Healthcare Images Uploader
+Uploads healthcare images to Cloudinary and stores vectors in Pinecone
 """
 
-import os
 import sys
 from pathlib import Path
 from PIL import Image
 import logging
 
 from config import config
-from src.cloud.appwrite_retrieval import AppwriteQuantumRetrieval
-from unified_feature_extractor import UnifiedFeatureExtractor
+from services.cloudinary_service import CloudinaryImageService
+from services.pinecone_service import PineconeVectorService
+from ml.unified_feature_extractor import UnifiedFeatureExtractor
 
 # Configure logging
 logging.basicConfig(
@@ -25,9 +25,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def upload_healthcare_images(image_dir: str = "data/professional_images/healthcare"):
+def upload_healthcare_images(image_dir: str = "data/testingimages/healthcare"):
     """
-    Upload healthcare images to Appwrite
+    Upload healthcare images to Cloudinary and Pinecone
     
     Args:
         image_dir: Directory containing healthcare images
@@ -36,12 +36,14 @@ def upload_healthcare_images(image_dir: str = "data/professional_images/healthca
         # Initialize components
         logger.info("Initializing Healthcare Uploader...")
         feature_extractor = UnifiedFeatureExtractor(
-            model_path=config.MODEL_WEIGHTS_PATH,
-            feature_dim=config.FEATURE_DIMENSION
+            feature_dim=config.FEATURE_DIMENSION,
+            use_amp=True
         )
         logger.info("Feature extractor initialized")
-        retrieval_system = AppwriteQuantumRetrieval()
-        logger.info("Appwrite system initialized")
+        
+        cloudinary_service = CloudinaryImageService()
+        pinecone_service = PineconeVectorService()
+        logger.info("Cloud services initialized")
         
         # Get image files
         image_path = Path(image_dir)
@@ -49,7 +51,9 @@ def upload_healthcare_images(image_dir: str = "data/professional_images/healthca
             logger.error(f"Directory not found: {image_dir}")
             return
         
-        image_files = list(image_path.glob("*.jpg")) + list(image_path.glob("*.png")) + list(image_path.glob("*.jpeg"))
+        image_files = (list(image_path.glob("*.jpg")) + 
+                      list(image_path.glob("*.png")) + 
+                      list(image_path.glob("*.jpeg")))
         
         if not image_files:
             logger.warning(f"No images found in {image_dir}")
@@ -71,22 +75,30 @@ def upload_healthcare_images(image_dir: str = "data/professional_images/healthca
                 # Extract features
                 logger.info("Extracting features...")
                 features = feature_extractor.extract_features(image)
-                features_list = features.cpu().numpy().tolist()
                 
                 # Read image data
                 with open(image_file, 'rb') as f:
                     image_data = f.read()
                 
-                # Upload to Appwrite
-                logger.info("Uploading to Appwrite...")
-                result = retrieval_system.upload_image(
-                    image_data=image_data,
-                    filename=image_file.name,
-                    category='healthcare',
-                    features=features_list
+                # Upload to Cloudinary
+                logger.info("Uploading to Cloudinary...")
+                result = cloudinary_service.upload_image(
+                    image_data,
+                    image_file.name,
+                    'healthcare'
                 )
                 
-                logger.info(f"Upload successful: {result['image_id']}")
+                # Store in Pinecone
+                logger.info("Storing in Pinecone...")
+                vector_id = result['public_id'].replace('/', '_')
+                metadata = {
+                    'filename': image_file.name,
+                    'category': 'healthcare',
+                    'cloudinary_url': result['secure_url']
+                }
+                pinecone_service.upsert_vector(vector_id, features, metadata)
+                
+                logger.info(f"Upload successful: {result['public_id']}")
                 success_count += 1
                 
             except Exception as e:

@@ -41,7 +41,8 @@ export interface HealthResponse {
   status: string;
   feature_extractor: string;
   retrieval_system: string;
-  appwrite: string;
+  storage: string;
+  vectors: string;
 }
 
 export interface CategoryInfo {

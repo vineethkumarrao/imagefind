@@ -53,7 +53,7 @@ function App() {
               Quantum Image Retrieval
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Powered by AE-QIP Algorithm & Appwrite
+              Powered by Quantum Algorithm & Cloudinary + Pinecone
             </Typography>
           </Toolbar>
         </AppBar>

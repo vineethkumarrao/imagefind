@@ -1,16 +1,9 @@
-"""Check database contents"""
-from src.cloud.appwrite_retrieval import AppwriteQuantumRetrieval
-from config import config
+"""Check Pinecone database contents"""
+from services.pinecone_service import PineconeVectorService
 
-r = AppwriteQuantumRetrieval()
-result = r.databases.list_documents(
-    config.APPWRITE_DATABASE_ID,
-    config.APPWRITE_COLLECTION_ID
-)
+p = PineconeVectorService()
+stats = p.get_statistics()
 
-print(f"Total images in database: {result['total']}")
-print(f"\nFirst 5 images:")
-for i, doc in enumerate(result['documents'][:5], 1):
-    print(f"{i}. {doc['filename']}")
-    print(f"   - Features: {len(doc['features'])}D")
-    print(f"   - Category: {doc['category']}")
+print(f"Total vectors in Pinecone: {stats.get('vectors', 0)}")
+print(f"Dimension: {stats.get('dimension', 2048)}")
+print(f"\nIndex Status: {stats.get('status', 'unknown')}")

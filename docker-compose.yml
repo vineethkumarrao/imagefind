@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: imagecheck-backend
+    ports:
+      - "8000:8000"
+      - "5000:5000"
+    environment:
+      - CLOUDINARY_CLOUD_NAME=ddyytqwbq
+      - CLOUDINARY_API_KEY=315439667751671
+      - CLOUDINARY_API_SECRET=J9F8TguFx9Xw9TgCyLAamS2jGF0
+      - PINECONE_API_KEY=pcsk_6ymDQY_CpQG5yUj1BpjFYuD1g9KyuMFzebjbP1zvYXZ1v2jM7JLnevcgeLRbJTUGZxQqAM
+      - PINECONE_ENVIRONMENT=us-east-1
+      - PINECONE_INDEX_NAME=quantum-images-prod
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data/uploads:/app/data/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  uploads:
+    driver: local
