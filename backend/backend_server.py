@@ -14,7 +14,7 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from PIL import Image
 import uvicorn
-from config import config
+import config
 from services.cloudinary_service import CloudinaryImageService
 from services.pinecone_service import PineconeVectorService
 

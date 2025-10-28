@@ -13,7 +13,7 @@ from typing import List
 import logging
 import numpy as np
 
-from config import config
+import config
 from src.cloud.appwrite_retrieval import AppwriteQuantumRetrieval
 
 # Configure logging
